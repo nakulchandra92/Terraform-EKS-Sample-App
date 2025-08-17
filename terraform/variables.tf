@@ -31,7 +31,7 @@ variable "private_subnet_cidrs" {
 variable "node_instance_type" {
   description = "Instance type for EKS managed node group"
   type        = string
-  default     = "t3.small"
+  default     = "t2.micro"
 }
 
 variable "desired_size" {

@@ -12,3 +12,4 @@ override.tf.json
 # Local
 *.zip
 .DS_Store
+.vscode

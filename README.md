@@ -6,7 +6,7 @@ This repository provisions a minimal AWS infrastructure with Terraform and deplo
 - Expose **`/get`** publicly on the internet.  
 - Expose **`/post`** and **`/put`** **only inside the VPC** (private/internal).
 
-**Approach (simple & robust):**
+**Approach:**
 - EKS cluster with worker nodes **in private subnets**.
 - Two lightweight **NGINX Ingress Controllers** (installed via Helm):
   - `public` class → **internet-facing** Network Load Balancer (Service `LoadBalancer`)
@@ -15,9 +15,16 @@ This repository provisions a minimal AWS infrastructure with Terraform and deplo
   - Public Ingress: only `/get` → app
   - Internal Ingress: `/post` and `/put` → app
 
-> Using NGINX Ingress avoids extra IAM/IRSA setup required by the AWS Load Balancer Controller (ALB), keeping the solution small and easy to understand while still satisfying **L7 path-based** exposure (public vs internal).
-
 ---
+##  Architecture Overview
+
+```
+Internet Traffic:
+Internet → Public NLB → Public NGINX → /get endpoint
+
+VPC-Only Traffic:
+VPC → Internal NLB → Internal NGINX → /post, /put endpoints
+```
 
 ## Repository layout
 
@@ -49,7 +56,7 @@ This repository provisions a minimal AWS infrastructure with Terraform and deplo
 - **Terraform ≥ 1.5**, **kubectl**, **AWS CLI ≥ 2**, and **Helm** (Helm is used by Terraform provider).
 - Sane IAM permissions (VPC, EKS, EC2, IAM, ELB/NLB).
 
-> ⚠️ **Costs**: EKS control plane, a NAT gateway, and two NLBs incur hourly charges. This repo is designed for short-lived demos—**apply, verify, and destroy**. Free-tier cannot fully cover EKS/NAT/NLB. See **Cleanup** below.
+> **Costs**: EKS control plane, a NAT gateway, and two NLBs incur hourly charges. This repo is designed for short-lived demos—**apply, verify, and destroy**. Free-tier cannot fully cover EKS/NAT/NLB. See **Cleanup** below.
 
 ---
 
